@@ -1,6 +1,6 @@
 import java.util.PriorityQueue
 
-val SIZE: Int = 71
+const val SIZE: Int = 71
 
 fun day18 (lines: List<String>) {
     val corruptedBytes = lines.map { Position(it.split(',')[0].toInt(), it.split(',')[1].toInt()) }
@@ -8,12 +8,12 @@ fun day18 (lines: List<String>) {
     val shortestPath = findShortestPath(corruptedBytes.take(1024))
     
     println("Day 18 part 1: $shortestPath")
-
-    for (i in 1025 until lines.size) {
+    
+    for (i in lines.size - 1 downTo 1) {
         val shortestPath = findShortestPath(corruptedBytes.take(i))
         
-        if (shortestPath == Int.MAX_VALUE) {
-            println("Day 18 part 2: ${corruptedBytes[i - 1]}")
+        if (shortestPath < Int.MAX_VALUE) {
+            println("Day 18 part 2: ${corruptedBytes[i]}")
             break
         }
     }
