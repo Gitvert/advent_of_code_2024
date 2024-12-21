@@ -1,18 +1,29 @@
 import java.util.PriorityQueue
 
+val SIZE: Int = 71
+
 fun day18 (lines: List<String>) {
     val corruptedBytes = lines.map { Position(it.split(',')[0].toInt(), it.split(',')[1].toInt()) }
     
     val shortestPath = findShortestPath(corruptedBytes.take(1024))
     
     println("Day 18 part 1: $shortestPath")
+
+    for (i in 1025 until lines.size) {
+        val shortestPath = findShortestPath(corruptedBytes.take(i))
+        
+        if (shortestPath == Int.MAX_VALUE) {
+            println("Day 18 part 2: ${corruptedBytes[i - 1]}")
+            break
+        }
+    }
 }
 
 fun findShortestPath(corruptedBytes: List<Position>): Int {
     val dx = arrayOf(-1, 0, 1, 0)
     val dy = arrayOf(0, 1, 0, -1)
 
-    val distance = Array(71) { IntArray(71) { Int.MAX_VALUE } }
+    val distance = Array(SIZE) { IntArray(SIZE) { Int.MAX_VALUE } }
 
     distance[0][0] = 0
 
@@ -28,7 +39,7 @@ fun findShortestPath(corruptedBytes: List<Position>): Int {
             val targetY = current.y + dy[i]
             val newCost = current.cost + 1
 
-            if (isInGrid(targetX, targetY, 71) && canMoveTo(Position(targetX, targetY), corruptedBytes)) {
+            if (isInGrid(targetX, targetY) && canMoveTo(Position(targetX, targetY), corruptedBytes)) {
                 if (distance[targetY][targetX] > newCost) {
 
                     if (distance[targetY][targetX] != Int.MAX_VALUE) {
@@ -43,15 +54,15 @@ fun findShortestPath(corruptedBytes: List<Position>): Int {
         }
     }
 
-    return distance[70][70]
+    return distance[SIZE - 1][SIZE - 1]
 }
 
 fun canMoveTo(pos: Position, corruptedBytes: List<Position>): Boolean {
     return !corruptedBytes.contains(pos)
 }
 
-fun isInGrid(x: Int, y: Int, size: Int): Boolean {
-    return x in 0 until size && y in 0 until size
+fun isInGrid(x: Int, y: Int): Boolean {
+    return x in 0 until SIZE && y in 0 until SIZE
 }
 
 data class GridPosition(val x: Int, val y: Int, val cost: Int)
