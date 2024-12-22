@@ -18,7 +18,8 @@ fun day20 (lines: List<String>) {
     }
     
     val path = findPath(walls, start, end)
-    var validCheats = 0
+    var validCheatsPart1 = 0
+    var validCheatsPart2 = 0
     
     for (i in 0 .. path.indices.last) {
         for (j in i .. path.indices.last) {
@@ -30,13 +31,29 @@ fun day20 (lines: List<String>) {
                 val secondSecond = path.indexOf(second)
                 
                 if (abs(firstIndex - secondSecond) >= 101) {
-                    validCheats++
+                    validCheatsPart1++
+                }
+            }
+            
+            val manhattanDistance = getManhattanDistance(first, second)
+            
+            if (manhattanDistance <= 20) {
+                val firstIndex = path.indexOf(first)
+                val secondSecond = path.indexOf(second)
+                
+                if (abs(firstIndex - secondSecond) >= 100 + manhattanDistance) {
+                    validCheatsPart2++
                 }
             }
         }
     }
     
-    println("Day 20 part 1: $validCheats")
+    println("Day 20 part 1: $validCheatsPart1")
+    println("Day 20 part 2: $validCheatsPart2")
+}
+
+fun getManhattanDistance(p1: Position, p2: Position): Int {
+    return abs(p1.x - p2.x) + abs(p1.y - p2.y)
 }
 
 fun findPath(walls: List<Position>, start: Position, end: Position): List<Position> {
