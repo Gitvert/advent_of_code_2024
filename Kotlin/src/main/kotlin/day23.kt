@@ -38,6 +38,42 @@ fun day23 (lines: List<String>) {
         .count()
     
     println("Day 23 part 1: $part1Answer")
+
+    var largerClique = triplets.toSet()
+    var largestClique = 3
+    
+    try {
+        while (true) {
+            val newClique = createLargerClique(largerClique, nodes)
+            val newCliqueSize = newClique.first().size
+            if (newCliqueSize > largestClique) {
+                largerClique = newClique
+                largestClique = newCliqueSize
+            } else {
+                break
+            }
+        }
+    } catch (_: Exception) { }
+    
+    val part2Answer = largerClique.joinToString(",").replace(" ", "")
+    
+    println("Day 23 part 2: $part2Answer")
 }
 
-data class Node(val name: String, val neighbors: MutableList<String>) {}
+fun createLargerClique(currentClique: Set<List<String>>, nodes: MutableList<Node>): Set<List<String>> {
+    val largerClique = mutableSetOf<List<String>>()
+    
+    currentClique.forEach { clique ->
+        nodes.forEach { node ->
+            if (node.neighbors.containsAll(clique)) {
+                val newClique = clique.toMutableList()
+                newClique.add(node.name)
+                largerClique.add(newClique.sorted())
+            }
+        }
+    }
+    
+    return largerClique
+}
+
+data class Node(val name: String, val neighbors: MutableList<String>)
