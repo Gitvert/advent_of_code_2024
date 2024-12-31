@@ -1,14 +1,22 @@
 import kotlin.math.pow
 
 fun day17 (lines: List<String>) {
-    val programState = ProgramState(0, 46323429, 0, 0, listOf(), mutableListOf())
+    day17part1(lines)
+    test(lines)
+    //day17part2(lines)
+}
+
+fun day17part2(lines: List<String>) {
+    val test = "4700747000000016".toLong(8)
     
+    val programState = ProgramState(0, test, 0, 0, listOf(), mutableListOf())
+
     lines.forEach { line ->
         if (line.contains("Program: ")) {
             programState.program = line.split("Program: ")[1].split(",").map { it.toLong() }
         }
     }
-    
+
     try {
         while (true) {
             val instructionPointerStart = programState.instructionPointer
@@ -26,7 +34,78 @@ fun day17 (lines: List<String>) {
             }
         }
     } catch (_: Exception) {
-        print("Day 17 part 1: ${programState.output.joinToString(",")}")
+        println("Day 17 part 2: ${programState.output.joinToString(",")}")
+    }
+}
+
+fun test(lines: List<String>) {
+    var programDefinition = listOf<Long>()
+    
+    lines.forEach { line ->
+        if (line.contains("Program: ")) {
+            programDefinition = line.split("Program: ")[1].split(",").map { it.toLong() }
+        }
+    }
+    
+    var index = 4L
+    while (true) {
+        index *= 2
+        val programState = ProgramState(0, index, 0, 0, programDefinition, mutableListOf())
+
+        try {
+            while (true) {
+                val instructionPointerStart = programState.instructionPointer
+
+                performInstruction(
+                    programState.program[programState.instructionPointer.toInt()],
+                    programState.program[(programState.instructionPointer + 1).toInt()],
+                    programState
+                )
+
+                val instructionPointerEnd = programState.instructionPointer
+
+                if (instructionPointerStart == instructionPointerEnd) {
+                    programState.instructionPointer += 2
+                }
+            }
+        } catch (_: Exception) {
+            println("${index.toString(8)}: ${programState.output.joinToString(",")}")
+            println("${index}: ${programState.output.joinToString(",")}")
+            if (programState.program == programState.output) {
+                println("Day 17 part 2: $index") // Too low: 26530000000L
+                break
+            }
+        }
+    }
+}
+
+fun day17part1(lines: List<String>) {
+    val programState = ProgramState(0, 46323429, 0, 0, listOf(), mutableListOf())
+
+    lines.forEach { line ->
+        if (line.contains("Program: ")) {
+            programState.program = line.split("Program: ")[1].split(",").map { it.toLong() }
+        }
+    }
+
+    try {
+        while (true) {
+            val instructionPointerStart = programState.instructionPointer
+
+            performInstruction(
+                programState.program[programState.instructionPointer.toInt()],
+                programState.program[(programState.instructionPointer + 1).toInt()],
+                programState
+            )
+
+            val instructionPointerEnd = programState.instructionPointer
+
+            if (instructionPointerStart == instructionPointerEnd) {
+                programState.instructionPointer += 2
+            }
+        }
+    } catch (_: Exception) {
+        println("Day 17 part 1: ${programState.output.joinToString(",")}")
     }
 }
 
